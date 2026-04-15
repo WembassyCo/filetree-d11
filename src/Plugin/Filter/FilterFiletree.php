@@ -348,6 +348,35 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
   }
 
   /**
+   * Recursively converts file list to renderable items.
+   *
+   * @param array $items
+   *   The items array from listFiles().
+   *
+   * @return array
+   *   Renderable items for theme_item_list.
+   */
+  protected function buildRenderItems(array $items): array {
+    $render_items = [];
+    foreach ($items as $item) {
+      $render_item = [
+        '#markup' => $item['data'],
+      ];
+      if (!empty($item['title'])) {
+        $render_item['#attributes'] = ['title' => $item['title']];
+      }
+      if (!empty($item['class'])) {
+        $render_item['#wrapper_attributes'] = ['class' => $item['class']];
+      }
+      if (isset($item['children'])) {
+        $render_item['#children'] = $this->buildRenderItems($item['children']);
+      }
+      $render_items[] = $render_item;
+    }
+    return $render_items;
+  }
+
+  /**
    * Renders filetree.
    *
    * @param array $files
@@ -385,10 +414,13 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
       }
     }
 
+    // Convert files to renderable items.
+    $render_files = $this->buildRenderItems($files);
+
     // Render files.
     $output .= $this->renderer->render([
       '#theme' => 'item_list',
-      '#items' => $files,
+      '#items' => $render_files,
       '#title' => NULL,
       '#list_type' => 'ul',
       '#attributes' => ['class' => ['files']],
