@@ -24,7 +24,7 @@ function filetree_theme($existing, $type, $theme, $path): array {
 /**
  * Implements hook_help().
  */
-function filetree_help($route_name, RouteMatchInterface $route_match): string|
+function filetree_help($route_name, RouteMatchInterface $route_match): string {
   switch ($route_name) {
     case 'help.page.filetree':
       return '<p>' . t('The File Tree module allows you to display an interactive list of files and folders using the [filetree] tag in formatted text. For more information, see the <a href=&quot;http://drupal.org/project/filetree&quot;>File Tree project page</a>.') . '</p>';
