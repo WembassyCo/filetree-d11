@@ -18,10 +18,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  *   id = "filetree",
  *   title = @Translation("File Tree"),
  *   description = @Translation("Replaces [filetree dir=&quot;some-directory&quot;] with an inline list of files."),
- *   type = Drupal\filter\Plugin\FilterInterface::TYPE_MARKUP_LANGUAGE,
- *   settings = {
- *     "folders" = "*"
- *   }
+ *   type = Drupal\filter\Plugin\FilterInterface::TYPE_HTML_RESTRICTOR
  * )
  */
 class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterface {
@@ -91,6 +88,15 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
       '#default_value' => $this->settings['folders'],
     ];
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration(): array {
+    return [
+      'folders' => '*',
+    ];
   }
 
   /**
