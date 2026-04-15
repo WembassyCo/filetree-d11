@@ -179,10 +179,10 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
 
       // Render tree.
       $files = $this->listFiles($path, $params[$key]);
-      $rendered = $this->themeFiletree($files, $params[$key]);
+      $html = $this->themeFiletree($files, $params[$key]);
 
       // Replace token with rendered tree.
-      $text = str_replace($matches[0][$key], $rendered, $text);
+      $text = str_replace($matches[0][$key], $html, $text);
     }
 
     return new FilterProcessResult($text);
@@ -348,32 +348,37 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
   }
 
   /**
-   * Recursively converts file list to renderable items.
+   * Recursively builds HTML list from file array.
    *
    * @param array $items
    *   The items array from listFiles().
    *
-   * @return array
-   *   Renderable items for theme_item_list.
+   * @return string
+   *   HTML list markup.
    */
-  protected function buildRenderItems(array $items): array {
-    $render_items = [];
-    foreach ($items as $item) {
-      $render_item = [
-        '#markup' => $item['data'],
-      ];
-      if (!empty($item['title'])) {
-        $render_item['#attributes'] = ['title' => $item['title']];
-      }
-      if (!empty($item['class'])) {
-        $render_item['#wrapper_attributes'] = ['class' => $item['class']];
-      }
-      if (isset($item['children'])) {
-        $render_item['#children'] = $this->buildRenderItems($item['children']);
-      }
-      $render_items[] = $render_item;
+  protected function buildHtmlList(array $items): string {
+    if (empty($items)) {
+      return '';
     }
-    return $render_items;
+
+    $html = '<ul>';
+    foreach ($items as $item) {
+      $html .= '<li';
+      if (!empty($item['class'])) {
+        $html .= ' class="' . implode(' ', $item['class']) . '"';
+      }
+      if (!empty($item['title'])) {
+        $html .= ' title="' . \Drupal\Component\Utility\Html::escape($item['title']) . '"';
+      }
+      $html .= '>' . $item['data'];
+
+      if (isset($item['children']) && !empty($item['children'])) {
+        $html .= $this->buildHtmlList($item['children']);
+      }
+      $html .= '</li>';
+    }
+    $html .= '</ul>';
+    return $html;
   }
 
   /**
@@ -385,7 +390,7 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
    *   The parameters array.
    *
    * @return string
-   *   The rendered output.
+   *   The rendered HTML output.
    */
   protected function themeFiletree(array $files, array $params): string {
     $output = '';
@@ -400,31 +405,30 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
         }
       }
       if ($has_folder) {
-        $controls = [
-          ['#markup' => '<a href="#" class="expand">' . $this->t('expand all') . '</a>'],
-          ['#markup' => '<a href="#" class="collapse">' . $this->t('collapse all') . '</a>'],
-        ];
-        $output .= $this->renderer->render([
-          '#theme' => 'item_list',
-          '#items' => $controls,
-          '#title' => NULL,
-          '#list_type' => 'ul',
-          '#attributes' => ['class' => ['controls']],
-        ]);
+        $output .= '<ul class="controls">';
+        $output .= '<li><a href="#" class="expand">' . $this->t('expand all') . '</a></li>';
+        $output .= '<li><a href="#" class="collapse">' . $this->t('collapse all') . '</a></li>';
+        $output .= '</ul>';
       }
     }
 
-    // Convert files to renderable items.
-    $render_files = $this->buildRenderItems($files);
-
-    // Render files.
-    $output .= $this->renderer->render([
-      '#theme' => 'item_list',
-      '#items' => $render_files,
-      '#title' => NULL,
-      '#list_type' => 'ul',
-      '#attributes' => ['class' => ['files']],
-    ]);
+    // Build file list HTML.
+    $output .= '<ul class="files">';
+    foreach ($files as $item) {
+      $output .= '<li';
+      if (!empty($item['class'])) {
+        $output .= ' class="' . implode(' ', $item['class']) . '"';
+      }
+      if (!empty($item['title'])) {
+        $output .= ' title="' . \Drupal\Component\Utility\Html::escape($item['title']) . '"';
+      }
+      $output .= '>' . $item['data'];
+      if (isset($item['children']) && !empty($item['children'])) {
+        $output .= $this->buildHtmlList($item['children']);
+      }
+      $output .= '</li>';
+    }
+    $output .= '</ul>';
 
     // Generate classes and unique ID for wrapper div.
     $id = \Drupal\Component\Utility\Html::cleanCssIdentifier(uniqid('filetree-'));
@@ -436,7 +440,9 @@ class FilterFiletree extends FilterBase implements ContainerFactoryPluginInterfa
       $classes[] = 'filetree-animation';
     }
 
-    return '<div id="' . $id . '" class="' . implode(' ', $classes) . '">' . $output . '</div>';
+    $html = '<div id="' . $id . '" class="' . implode(' ', $classes) . '">' . $output . '</div>';
+
+    return $html;
   }
 
   /**
