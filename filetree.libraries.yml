@@ -1,0 +1,10 @@
+filetree:
+  css:
+    theme:
+      css/filetree.css: {}
+  js:
+    js/filetree.js: { minified: false }
+  dependencies:
+    - core/jquery
+    - core/once
+    - core/drupal

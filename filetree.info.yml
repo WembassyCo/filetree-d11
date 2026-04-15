@@ -1,0 +1,14 @@
+name: File Tree
+description: Renders an interactive list from a folder of files.
+package: Input filters
+type: module
+core_version_requirement: ^11
+dependencies:
+  - drupal:filter
+  - drupal:token
+configure: entity.filter_format.collection
+
+# Information added by Drupal.org packaging script on 2024-01-01
+version: '3.0.0'
+project: 'filetree'
+datestamp: 1704153600
