@@ -24,16 +24,32 @@ class FiletreeBlock extends BlockBase {
 
   /**
    * The file URL generator.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface|null
    */
   protected ?FileUrlGeneratorInterface $fileUrlGenerator = NULL;
 
   /**
    * The filetree service.
+   *
+   * @var \Drupal\filetree\FiletreeService|null
    */
   protected ?FiletreeService $filetreeService = NULL;
 
   /**
-   * {@inheritdoc}
+   * Creates a new instance via the dependency injection container.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   *
+   * @return static
+   *   Returns a new FiletreeBlock instance.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     $instance = new static($configuration, $plugin_id, $plugin_definition);

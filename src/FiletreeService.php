@@ -15,36 +15,53 @@ class FiletreeService {
 
   /**
    * The file URL generator.
+   *
+   * @var \Drupal\Core\File\FileUrlGeneratorInterface
    */
   protected FileUrlGeneratorInterface $fileUrlGenerator;
 
   /**
    * The date formatter.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected DateFormatterInterface $dateFormatter;
 
   /**
    * Maximum recursion depth to prevent memory exhaustion.
+   *
+   * @var int
    */
   protected const MAX_DEPTH = 5;
 
   /**
    * Maximum number of files to process per directory.
+   *
+   * @var int
    */
   protected const MAX_FILES_PER_DIR = 100;
 
   /**
    * Maximum total files to process.
+   *
+   * @var int
    */
   protected const MAX_TOTAL_FILES = 500;
 
   /**
    * Current file count during processing.
+   *
+   * @var int
    */
   protected int $fileCount = 0;
 
   /**
    * Constructs a new FiletreeService.
+   *
+   * @param \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator
+   *   The file URL generator service.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
+   *   The date formatter service.
    */
   public function __construct(FileUrlGeneratorInterface $file_url_generator, DateFormatterInterface $date_formatter) {
     $this->fileUrlGenerator = $file_url_generator;
@@ -52,7 +69,13 @@ class FiletreeService {
   }
 
   /**
-   * {@inheritdoc}
+   * Creates a new instance via the dependency injection container.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   *
+   * @return static
+   *   A new FiletreeService instance.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -67,12 +90,19 @@ class FiletreeService {
    * @param string $uri
    *   The URI of the directory to scan.
    * @param array $params
-   *   Configuration parameters.
+   *   Configuration parameters with keys:
+   *   - exclude: (string[]) Patterns to exclude.
+   *   - absolute: (bool) Whether to use absolute URLs.
    * @param int $depth
    *   Current recursion depth (internal use).
    *
    * @return array
-   *   Array of file information.
+   *   Array of file information. Each item contains:
+   *   - type: (string) 'file' or 'directory'.
+   *   - name: (string) The file or directory name.
+   *   - path: (string) The full filesystem path.
+   *   For files: filename, extension, size, created, modified.
+   *   For directories: children array.
    */
   public function listFiles(string $uri, array $params, int $depth = 0): array {
     // Safety check: max depth exceeded
