@@ -196,48 +196,59 @@ class FiletreeBlock extends BlockBase {
       ];
     }
 
-    // Build the params array for the service
-    $params = [
-      'dir' => $config['folder_path'],
-      'multi' => $config['multi'] ?? TRUE,
-      'controls' => $config['controls'] ?? TRUE,
-      'absolute' => $config['absolute'] ?? TRUE,
-      'exclude' => array_filter(array_map('trim', explode(';', $config['exclude'] ?? 'CVS'))),
-      'dirname' => $config['dirname'] ?? '%filename',
-      'dirtitle' => $config['dirtitle'] ?? '%filename',
-      'filename' => $config['filename'] ?? '%filename',
-      'filetitle' => $config['filetitle'] ?? '%filename',
-      'fileformat' => $config['fileformat'] ?? '%link',
-    ];
+    try {
+      // Build the params array for the service
+      $params = [
+        'dir' => $config['folder_path'],
+        'multi' => $config['multi'] ?? TRUE,
+        'controls' => $config['controls'] ?? TRUE,
+        'absolute' => $config['absolute'] ?? TRUE,
+        'exclude' => array_filter(array_map('trim', explode(';', $config['exclude'] ?? 'CVS'))),
+        'dirname' => $config['dirname'] ?? '%filename',
+        'dirtitle' => $config['dirtitle'] ?? '%filename',
+        'filename' => $config['filename'] ?? '%filename',
+        'filetitle' => $config['filetitle'] ?? '%filename',
+        'fileformat' => $config['fileformat'] ?? '%link',
+      ];
 
-    // Convert tokens in format strings
-    foreach (['dirname', 'dirtitle', 'filename', 'filetitle', 'fileformat'] as $token_param) {
-      $params[$token_param] = str_replace('%', '[filetree:', $params[$token_param]) . ']';
-    }
+      // Convert tokens in format strings
+      foreach (['dirname', 'dirtitle', 'filename', 'filetitle', 'fileformat'] as $token_param) {
+        $params[$token_param] = str_replace('%', '[filetree:', $params[$token_param]) . ']';
+      }
 
-    // Build URI from folder path
-    $scheme = \Drupal::config('system.file')->get('default_scheme');
-    $params['uri'] = $scheme . '://' . $config['folder_path'];
+      // Build URI from folder path
+      $scheme = \Drupal::config('system.file')->get('default_scheme');
+      $params['uri'] = $scheme . '://' . $config['folder_path'];
 
-    // Get file list from service
-    $files = $this->filetreeService->listFiles($params['uri'], $params);
+      // Reset file count before scan
+      $this->filetreeService->resetFileCount();
 
-    if (empty($files)) {
+      // Get file list from service
+      $files = $this->filetreeService->listFiles($params['uri'], $params);
+
+      if (empty($files)) {
+        return [
+          '#markup' => $this->t('No files found in the specified folder.'),
+        ];
+      }
+
+      $build = [
+        '#theme' => 'filetree',
+        '#files' => $files,
+        '#params' => $params,
+        '#attached' => [
+          'library' => ['filetree/filetree'],
+        ],
+      ];
+
+      return $build;
+
+    } catch (\Exception $e) {
+      \Drupal::logger('filetree')->error('Error building filetree block: @message', ['@message' => $e->getMessage()]);
       return [
-        '#markup' => $this->t('No files found in the specified folder.'),
+        '#markup' => $this->t('Error loading file tree. The folder may contain too many files or be inaccessible.'),
       ];
     }
-
-    $build = [
-      '#theme' => 'filetree',
-      '#files' => $files,
-      '#params' => $params,
-      '#attached' => [
-        'library' => ['filetree/filetree'],
-      ],
-    ];
-
-    return $build;
   }
 
 }
