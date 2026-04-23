@@ -15,7 +15,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 function filetree_theme($existing, $type, $theme, $path): array {
   return [
     'filetree' => [
-      'render element' => 'element',
       'variables' => [
         'files' => [],
         'params' => [],
@@ -30,55 +29,6 @@ function filetree_theme($existing, $type, $theme, $path): array {
  * Implements hook_preprocess_HOOK() for filetree theme.
  */
 function template_preprocess_filetree(&$variables): void {
-  $files = $variables['files'] ?? [];
-  $params = $variables['params'] ?? [];
-  
-  /** @var \Drupal\filetree\FiletreeService $filetree_service */
-  $filetree_service = \Drupal::service('filetree.service');
-  
-  // Process the file tree recursively
-  $variables['tree'] = _filetree_build_tree($files, $params, $filetree_service);
-  $variables['params'] = $params;
+  // Files are already prepared by FiletreeBlock, just pass them through
   $variables['#attached']['library'][] = 'filetree/filetree';
-}
-
-/**
- * Build the tree structure for rendering.
- *
- * @param array $files
- *   Array of file information.
- * @param array $params
- *   Configuration parameters.
- * @param \Drupal\filetree\FiletreeService $service
- *   The filetree service.
- *
- * @return array
- *   Renderable tree structure.
- */
-function _filetree_build_tree(array $files, array $params, \Drupal\filetree\FiletreeService $service): array {
-  $tree = [];
-  
-  foreach ($files as $name => $fileinfo) {
-    $item = [
-      'name' => $name,
-      'type' => $fileinfo['type'],
-    ];
-    
-    if ($fileinfo['type'] === 'directory') {
-      // Process directory name with tokens
-      $item['display_name'] = $service->processTokens($params['dirname'], $fileinfo, $params);
-      $item['title'] = $service->processTokens($params['dirtitle'], $fileinfo, $params);
-      $item['children'] = _filetree_build_tree($fileinfo['children'] ?? [], $params, $service);
-    } else {
-      // Process file with tokens
-      $item['display_name'] = $service->processTokens($params['fileformat'], $fileinfo, $params);
-      $item['title'] = $service->processTokens($params['filetitle'], $fileinfo, $params);
-      $item['size'] = $service->formatSize($fileinfo['size'] ?? 0);
-      $item['extension'] = $fileinfo['extension'] ?? '';
-    }
-    
-    $tree[] = $item;
-  }
-  
-  return $tree;
 }
