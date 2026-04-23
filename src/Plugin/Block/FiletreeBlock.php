@@ -213,34 +213,21 @@ class FiletreeBlock extends BlockBase {
     }
 
     try {
-      // Build the params array for the service
+      // Simple params for file listing
       $params = [
-        'dir' => $config['folder_path'],
-        'multi' => $config['multi'] ?? TRUE,
-        'controls' => $config['controls'] ?? TRUE,
-        'absolute' => $config['absolute'] ?? TRUE,
         'exclude' => array_filter(array_map('trim', explode(';', $config['exclude'] ?? 'CVS'))),
-        'dirname' => $config['dirname'] ?? '%filename',
-        'dirtitle' => $config['dirtitle'] ?? '%filename',
-        'filename' => $config['filename'] ?? '%filename',
-        'filetitle' => $config['filetitle'] ?? '%filename',
-        'fileformat' => $config['fileformat'] ?? '%link',
+        'absolute' => $config['absolute'] ?? TRUE,
       ];
-
-      // Convert tokens in format strings
-      foreach (['dirname', 'dirtitle', 'filename', 'filetitle', 'fileformat'] as $token_param) {
-        $params[$token_param] = str_replace('%', '[filetree:', $params[$token_param]) . ']';
-      }
 
       // Build URI from folder path
       $scheme = \Drupal::config('system.file')->get('default_scheme');
-      $params['uri'] = $scheme . '://' . $config['folder_path'];
+      $uri = $scheme . '://' . $config['folder_path'];
 
       // Reset file count before scan
       $this->filetreeService->resetFileCount();
 
       // Get file list from service
-      $files = $this->filetreeService->listFiles($params['uri'], $params);
+      $files = $this->filetreeService->listFiles($uri, $params);
 
       if (empty($files)) {
         return [
@@ -252,6 +239,9 @@ class FiletreeBlock extends BlockBase {
         '#theme' => 'filetree',
         '#files' => $files,
         '#params' => $params,
+        '#cache' => [
+          'max-age' => 0,
+        ],
         '#attached' => [
           'library' => ['filetree/filetree'],
         ],

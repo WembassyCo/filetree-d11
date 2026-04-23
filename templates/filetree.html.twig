@@ -1,41 +1,36 @@
-{% if tree %}
-  <div class="filetree-wrapper" data-multi="{{ params.multi ? 'true' : 'false' }}" data-controls="{{ params.controls ? 'true' : 'false' }}" data-animation="{{ params.animation ? 'true' : 'false' }}">
-    
-    {% if params.controls %}
-      <div class="filetree-controls">
-        <a href="#" class="filetree-expand-all">{{ 'Expand all'|t }}</a> |
-        <a href="#" class="filetree-collapse-all">{{ 'Collapse all'|t }}</a>
-      </div>
-    {% endif %}
-    
-    <ul class="filetree-tree">
-      {{ _self.render_tree(tree, params) }}
-    </ul>
-    
-  </div>
+{#
+/**
+ * @file
+ * Simple file tree template - w3schools style tree view.
+ *
+ * Available variables:
+ * - files: Array of file/directory items.
+ * - params: Configuration parameters.
+ */
+#}
+{% if files %}
+  <ul class="filetree-simple">
+    {{ _self.render_items(files, 0) }}
+  </ul>
 {% else %}
-  <p>{{ 'No files found in the specified directory.'|t }}</p>
+  <p>{{ 'No files found.'|t }}</p>
 {% endif %}
 
-{% macro render_tree(tree, params) %}
-  {% for item in tree %}
-    <li class="filetree-item filetree-type-{{ item.type }}">
-      
-      {% if item.type == 'directory' %}
-        <span class="filetree-folder-toggle"></span>
-        <span class="filetree-folder-name" title="{{ item.title }}">{{ item.display_name }}</span>
-        
+{% macro render_items(items, depth) %}
+  {% for name, item in items %}
+    {% if item.type == 'directory' %}
+      <li class="filetree-folder">
+        <span class="caret">{{ name }}</span>
         {% if item.children %}
-          <ul class="filetree-children">
-            {{ _self.render_tree(item.children, params) }}
+          <ul class="nested">
+            {{ _self.render_items(item.children, depth + 1) }}
           </ul>
         {% endif %}
-        
-      {% else %}
-        <span class="filetree-file-icon"></span>
-        <span class="filetree-file-name" title="{{ item.title }}">{{ item.display_name|raw }}</span>
-      {% endif %}
-      
-    </li>
+      </li>
+    {% else %}
+      <li class="filetree-file">
+        <a href="{{ item.url|default('#') }}" title="{{ name }}">{{ name }}</a>
+      </li>
+    {% endif %}
   {% endfor %}
 {% endmacro %}

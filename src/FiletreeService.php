@@ -163,38 +163,30 @@ class FiletreeService {
           // Recursively scan subdirectory with increased depth
           $children = $this->listFiles($filepath, $params, $depth + 1);
           
-          $files[$basename] = [
-            'type' => 'directory',
-            'name' => $basename,
-            'path' => $filepath,
-            'children' => $children,
-          ];
-        } else {
-          // Skip large files (over 100MB) to save memory
-          $fileSize = $fileinfo->getSize();
-          if ($fileSize > 104857600) { // 100MB
+          if (!empty($children)) {
             $files[$basename] = [
-              'type' => 'file',
+              'type' => 'directory',
               'name' => $basename,
               'path' => $filepath,
-              'filename' => $fileinfo->getFilename(),
-              'extension' => $fileinfo->getExtension(),
-              'size' => $fileSize,
-              'created' => $fileinfo->getCTime(),
-              'modified' => $fileinfo->getMTime(),
-            ];
-          } else {
-            $files[$basename] = [
-              'type' => 'file',
-              'name' => $basename,
-              'path' => $filepath,
-              'filename' => $fileinfo->getFilename(),
-              'extension' => $fileinfo->getExtension(),
-              'size' => $fileSize,
-              'created' => $fileinfo->getCTime(),
-              'modified' => $fileinfo->getMTime(),
+              'children' => $children,
             ];
           }
+        } else {
+          // Generate URL for the file
+          try {
+            $url = $params['absolute']
+              ? $this->fileUrlGenerator->generateAbsoluteString($filepath)
+              : $this->fileUrlGenerator->generateString($filepath);
+          } catch (\Exception $e) {
+            $url = '#';
+          }
+          
+          $files[$basename] = [
+            'type' => 'file',
+            'name' => $basename,
+            'path' => $filepath,
+            'url' => $url,
+          ];
           
           $this->fileCount++;
         }
