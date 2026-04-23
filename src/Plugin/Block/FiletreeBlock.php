@@ -25,12 +25,12 @@ class FiletreeBlock extends BlockBase {
   /**
    * The file URL generator.
    */
-  protected FileUrlGeneratorInterface $fileUrlGenerator;
+  protected ?FileUrlGeneratorInterface $fileUrlGenerator = NULL;
 
   /**
    * The filetree service.
    */
-  protected FiletreeService $filetreeService;
+  protected ?FiletreeService $filetreeService = NULL;
 
   /**
    * {@inheritdoc}
@@ -181,6 +181,14 @@ class FiletreeBlock extends BlockBase {
    */
   public function build(): array {
     $config = $this->configuration;
+    
+    // Ensure services are available (fallback to container if create() wasn't called)
+    if ($this->filetreeService === NULL) {
+      $this->filetreeService = \Drupal::service('filetree.service');
+    }
+    if ($this->fileUrlGenerator === NULL) {
+      $this->fileUrlGenerator = \Drupal::service('file_url_generator');
+    }
     
     if (empty($config['folder_path'])) {
       return [
