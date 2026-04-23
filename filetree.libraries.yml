@@ -1,0 +1,11 @@
+filetree:
+  version: VERSION
+  css:
+    theme:
+      css/filetree.css: {}
+  js:
+    js/filetree.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/once

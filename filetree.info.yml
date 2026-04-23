@@ -1,0 +1,9 @@
+name: 'File Tree'
+type: module
+description: 'Renders an interactive file tree block from a folder of files.'
+core_version_requirement: ^11
+package: 'Content'
+configure: admin/config/content/filetree
+dependencies:
+  - drupal:block
+  - drupal:file

@@ -1,0 +1,41 @@
+{% if tree %}
+  <div class="filetree-wrapper" data-multi="{{ params.multi ? 'true' : 'false' }}" data-controls="{{ params.controls ? 'true' : 'false' }}" data-animation="{{ params.animation ? 'true' : 'false' }}">
+    
+    {% if params.controls %}
+      <div class="filetree-controls">
+        <a href="#" class="filetree-expand-all">{{ 'Expand all'|t }}</a> |
+        <a href="#" class="filetree-collapse-all">{{ 'Collapse all'|t }}</a>
+      </div>
+    {% endif %}
+    
+    <ul class="filetree-tree">
+      {{ _self.render_tree(tree, params) }}
+    </ul>
+    
+  </div>
+{% else %}
+  <p>{{ 'No files found in the specified directory.'|t }}</p>
+{% endif %}
+
+{% macro render_tree(tree, params) %}
+  {% for item in tree %}
+    <li class="filetree-item filetree-type-{{ item.type }}">
+      
+      {% if item.type == 'directory' %}
+        <span class="filetree-folder-toggle"></span>
+        <span class="filetree-folder-name" title="{{ item.title }}">{{ item.display_name }}</span>
+        
+        {% if item.children %}
+          <ul class="filetree-children">
+            {{ _self.render_tree(item.children, params) }}
+          </ul>
+        {% endif %}
+        
+      {% else %}
+        <span class="filetree-file-icon"></span>
+        <span class="filetree-file-name" title="{{ item.title }}">{{ item.display_name|raw }}</span>
+      {% endif %}
+      
+    </li>
+  {% endfor %}
+{% endmacro %}

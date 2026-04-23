@@ -1,0 +1,206 @@
+/**
+ * @file
+ * Filetree module styles.
+ */
+
+.filetree-wrapper {
+  font-family: inherit;
+}
+
+.filetree-controls {
+  margin-bottom: 0.5em;
+  font-size: 0.9em;
+}
+
+.filetree-controls a {
+  text-decoration: none;
+}
+
+.filetree-controls a:hover {
+  text-decoration: underline;
+}
+
+.filetree-tree {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.filetree-children {
+  list-style: none;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.filetree-item {
+  margin: 2px 0;
+  line-height: 1.5;
+}
+
+/* Folder styles */
+.filetree-type-directory {
+  cursor: pointer;
+}
+
+.filetree-folder-toggle {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(../images/folder.png) no-repeat center center;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.filetree-type-directory.expanded > .filetree-folder-toggle {
+  background-image: url(../images/folder_open.png);
+}
+
+.filetree-folder-name {
+  font-weight: 600;
+}
+
+/* File styles */
+.filetree-file-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url(../images/file.png) no-repeat center center;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.filetree-file-name a {
+  text-decoration: none;
+}
+
+.filetree-file-name a:hover {
+  text-decoration: underline;
+}
+
+/* Initially collapse children */
+.filetree-children {
+  display: none;
+}
+
+.filetree-item.expanded > .filetree-children {
+  display: block;
+}
+
+/* File type icons - applied via extension classes */
+.filetree-file-icon.extension-application {
+  background-image: url(../images/application.png);
+}
+
+.filetree-file-icon.extension-code,
+.filetree-file-icon.extension-js,
+.filetree-file-icon.extension-json {
+  background-image: url(../images/code.png);
+}
+
+.filetree-file-icon.extension-css,
+.filetree-file-icon.extension-scss,
+.filetree-file-icon.extension-sass {
+  background-image: url(../images/css.png);
+}
+
+.filetree-file-icon.extension-sql,
+.filetree-file-icon.extension-db {
+  background-image: url(../images/db.png);
+}
+
+.filetree-file-icon.extension-doc,
+.filetree-file-icon.extension-docx,
+.filetree-file-icon.extension-odt {
+  background-image: url(../images/doc.png);
+}
+
+.filetree-file-icon.extension-mp4,
+.filetree-file-icon.extension-avi,
+.filetree-file-icon.extension-mov,
+.filetree-file-icon.extension-film {
+  background-image: url(../images/film.png);
+}
+
+.filetree-file-icon.extension-swf,
+.filetree-file-icon.extension-flash {
+  background-image: url(../images/flash.png);
+}
+
+.filetree-file-icon.extension-html,
+.filetree-file-icon.extension-htm {
+  background-image: url(../images/html.png);
+}
+
+.filetree-file-icon.extension-java,
+.filetree-file-icon.extension-jar {
+  background-image: url(../images/java.png);
+}
+
+.filetree-file-icon.extension-sh,
+.filetree-file-icon.extension-bash,
+.filetree-file-icon.extension-linux {
+  background-image: url(../images/linux.png);
+}
+
+.filetree-file-icon.extension-mp3,
+.filetree-file-icon.extension-wav,
+.filetree-file-icon.extension-music {
+  background-image: url(../images/music.png);
+}
+
+.filetree-file-icon.extension-pdf {
+  background-image: url(../images/pdf.png);
+}
+
+.filetree-file-icon.extension-php,
+.filetree-file-icon.extension-module,
+.filetree-file-icon.extension-inc {
+  background-image: url(../images/php.png);
+}
+
+.filetree-file-icon.extension-png,
+.filetree-file-icon.extension-jpg,
+.filetree-file-icon.extension-jpeg,
+.filetree-file-icon.extension-gif,
+.filetree-file-icon.extension-svg,
+.filetree-file-icon.extension-image {
+  background-image: url(../images/image.png);
+}
+
+.filetree-file-icon.extension-ppt,
+.filetree-file-icon.extension-pptx {
+  background-image: url(../images/ppt.png);
+}
+
+.filetree-file-icon.extension-psd {
+  background-image: url(../images/psd.png);
+}
+
+.filetree-file-icon.extension-rb,
+.filetree-file-icon.extension-ruby {
+  background-image: url(../images/ruby.png);
+}
+
+.filetree-file-icon.extension-script,
+.filetree-file-icon.extension-sh {
+  background-image: url(../images/script.png);
+}
+
+.filetree-file-icon.extension-txt,
+.filetree-file-icon.extension-text {
+  background-image: url(../images/txt.png);
+}
+
+.filetree-file-icon.extension-xls,
+.filetree-file-icon.extension-xlsx,
+.filetree-file-icon.extension-csv {
+  background-image: url(../images/xls.png);
+}
+
+.filetree-file-icon.extension-zip,
+.filetree-file-icon.extension-tar,
+.filetree-file-icon.extension-gz,
+.filetree-file-icon.extension-rar,
+.filetree-file-icon.extension-7z {
+  background-image: url(../images/zip.png);
+}

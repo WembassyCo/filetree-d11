@@ -1,0 +1,4 @@
+services:
+  filetree.service:
+    class: Drupal\filetree\FiletreeService
+    arguments: ['@file_url_generator', '@date.formatter']
